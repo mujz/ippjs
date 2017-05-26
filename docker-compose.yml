@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  db:
+    container_name: ipp_db
+    image: postgres:9.6
+    networks:
+      - ipp
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_USER: mujz
+      POSTGRES_PASSWORD: thinkific
+      POSTGRES_DB: ipp
+
+  api:
+    depends_on:
+      - db
+    container_name: ipp_api
+    image: node:latest
+    working_dir: /app
+    command: npm run init
+    networks:
+      - ipp
+    volumes:
+      - ./:/app
+    environment:
+      PORT: 80
+
+      DB_NAME: ipp
+      DB_USER: mujz
+      DB_PASSWORD: thinkific
+      DB_HOST: ipp_db
+      DB_PORT: 5432
+
+      SECRET_KEY: ipp,secret,thinkific
+      AUTH_TOKEN_EXPIRATION_INTERVAL_IN_SECONDS: 86400
+
+  web:
+    depends_on:
+      - api
+    container_name: ipp_web
+    image: mujz/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - ipp
+    volumes:
+      - ./ipp:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/conf.d/ipp.conf
+      - ./certs:/etc/ssl
+
+volumes:
+  db_data:
+
+networks:
+  ipp:
