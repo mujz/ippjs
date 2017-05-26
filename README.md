@@ -1,6 +1,6 @@
 # i++
 
-Go to [ippjs.mujz.ca](https://ipp.mujz.ca). Sign up with email or Facebook. Break it if you can ;)
+Go to [ippjs.mujz.ca](https://ippjs.mujz.ca). Break it if you can ;)
 
 # Run it yourself
 
